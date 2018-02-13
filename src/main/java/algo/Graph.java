@@ -1,6 +1,7 @@
 package algo;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * Representations: Adjacency list representation
@@ -21,6 +22,10 @@ public class Graph {
         for (int i = 0; i < adjListArr.length; i++) {
             adjListArr[i] = new LinkedList<Integer>();
         }
+    }
+
+    public void addEdge(Integer fromNode, Integer toNode){
+        adjListArr[fromNode].add(toNode);
     }
 
     /**
@@ -50,13 +55,11 @@ public class Graph {
 
         // for each (potential) forest visit adjacent nodes recursively
         for (int i = 0; i < numVertices; i++) {
-            startIndex = (startIndex + 1) % numVertices;
-
             // check for false forest
             if (!visited[startIndex]) {
                 forestDFS(startIndex, visited);
             }
-
+            startIndex = (startIndex + 1) % numVertices;
         }
     }
 
@@ -121,7 +124,32 @@ public class Graph {
      *             -> To implement that use flagging array for each connected sub-graph.
      */
     public void topologicalSort() {
+        boolean visited[] = new boolean[numVertices];
+        Stack<Integer> topologicalSortOrder = new Stack<Integer>();
 
+        for(int i=0;i<numVertices;i++){
+            if(!visited[i]){
+                forestTopologicalSort(i,visited, topologicalSortOrder);
+            }
+        }
+
+        for(int i=0;i<numVertices;i++){
+            System.out.println(topologicalSortOrder.pop());
+        }
+
+    }
+
+    private void forestTopologicalSort(int i, boolean[] visited, Stack<Integer> topologicalSortOrder) {
+        //mark current node as visited
+        visited[i] = true;
+        //recurse on all unvisited adjacent nodes.
+        for(Integer node : adjListArr[i]){
+            if(!visited[node]){
+                forestTopologicalSort(node,visited,topologicalSortOrder);
+            }
+        }
+        // push current data value in stack.
+        topologicalSortOrder.push(i);
     }
 
 }
