@@ -73,14 +73,55 @@ public class Graph {
     }
 
 
+    /**
+     * Algo: For a given node visit all of it's adjacent nodes and then repeat this for each of next nodes.
+     * Gotchas: Don't visit if a node if it has been already visited.
+     * DS:
+     * 1. Use a queue to maintain order of nodes to be visited. java has {@link LinkedList} that can be used for FIFO.
+     * 2. Use a visited array of flags to note if a node is visited.
+     */
     public void bfs(Integer startNodeIndex) {
+        // create a visited array. In array type instance default values are assigned. For boolean it's false.
+        boolean visited[] = new boolean[numVertices];
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+
+        queue.addLast(startNodeIndex);
+
+        while (!queue.isEmpty()) {
+            // visit current node.
+            Integer poppedNode = queue.removeFirst();
+            System.out.println(poppedNode);
+
+            visited[poppedNode] = true;
+            LinkedList<Integer> adjNodes = adjListArr[poppedNode];
+            for (Integer node : adjNodes) {
+                if (!visited[node])
+                    queue.addLast(node);
+            }
+        }
+
     }
 
-    /*
-     * Typical Application: Build order of dependencies in a project
-     * Constraints: The input dependency graph must be DAG (Directed Acyclic Graph) i.e. no cycles
+    /**
+     * For an acyclic DAG print a node before all it's adjacent nodes.
+     *
+     * Logic DFS looks good with one exception: If second (or later) visited connected component (forest) has an edge
+     * directed to node visited in previous forest. In DFS your shall print second (or later) forest's node after previous one.
+     * This shall violate the topological sort constraint.
+     *
+     * Fix: All connected components visited later should be printed first.
+     *
+     * Solution: Use a stack to push all element visited in #forestDFS AFTER recursing on it's adjacent nodes.
+     *           Using this the second and later forests shall be pushed later and thus printed first.
+     *
+     * Gotchas:
+     *     -> First two same as DFS ( don't revisit if already visited and cover disconnected components)
+     *     -> Third: Ensure there is no cycle if not mentioned explicitly in the problem statement.
+     *         -> For this, check if within a traversal of a connected sub-graph you don't revisit a node again.
+     *             -> To implement that use flagging array for each connected sub-graph.
      */
     public void topologicalSort() {
 
     }
+
 }
